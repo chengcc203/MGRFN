@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import torch
 from rdkit.Chem import AllChem
+from etflow import BaseFlow
 from sklearn.utils import shuffle
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.data import Data, DataLoader
@@ -68,6 +69,11 @@ def get_3d_coordinates(smiles):
                 coords.append(atom.coords)
         return np.array(coords)
 
+def get_3d_coordinates(smiles):
+    etflow = BaseFlow.from_default(model="drugs-o3")
+    output = etflow.predict([smiles], num_samples=3, as_mol=True)
+    mol = output[smiles]
+    return np.array(mol.GetConformer().GetPositions())
 
 class Chiral(InMemoryDataset):
 
